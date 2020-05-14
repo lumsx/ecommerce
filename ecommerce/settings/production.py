@@ -103,3 +103,12 @@ ECOMMERCE_COOKIE_DOMAIN = config_from_yaml.get('ECOMMERCE_COOKIE_DOMAIN')
 
 # Edly marketing site configuration
 EDLY_WORDPRESS_URL = config_from_yaml.get('EDLY_WORDPRESS_URL', EDLY_WORDPRESS_URL)
+
+# Add host IP address for AWS ELB health check to ALLOWED_HOSTS
+AWS_ENABLE_ELB_HEALTHCHECK = config_from_yaml.get('AWS_ENABLE_ELB_HEALTHCHECK')
+AWS_ELB_META_IPV4_URL = config_from_yaml.get('AWS_ELB_META_IPV4_URL')
+
+if AWS_ENABLE_ELB_HEALTHCHECK:
+    import requests
+    ELB_HEALTHCHECK_HOSTNAME = requests.get(AWS_ELB_META_IPV4_URL, timeout=5).text
+    ALLOWED_HOSTS += [ELB_HEALTHCHECK_HOSTNAME]

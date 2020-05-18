@@ -658,4 +658,9 @@ SAILTHRU_KEY = None
 SAILTHRU_SECRET = None
 
 # Edly marketing site configuration
-EDLY_WORDPRESS_URL = 'http://localhost:8888'
+EDLY_WORDPRESS_URL = 'http://wordpress.edx.devstack.lms/'
+
+# Edly configuration
+EDLY_USER_INFO_COOKIE_NAME = 'edly-user-info'
+EDLY_COOKIE_SECRET_KEY = 'EDLY-COOKIE-SECRET-KEY'
+EDLY_JWT_ALGORITHM = 'HS256'

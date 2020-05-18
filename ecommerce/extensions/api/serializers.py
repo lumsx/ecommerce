@@ -6,6 +6,7 @@ from decimal import Decimal
 
 import waffle
 from dateutil.parser import parse
+from django.conf import settings
 from django.contrib.auth import get_user_model
 from django.db import transaction
 from django.db.models import Q
@@ -25,7 +26,9 @@ from ecommerce.core.url_utils import get_ecommerce_url
 from ecommerce.courses.models import Course
 from ecommerce.entitlements.utils import create_or_update_course_entitlement
 from ecommerce.extensions.offer.constants import OFFER_ASSIGNMENT_REVOKED, OFFER_MAX_USES_DEFAULT
+from ecommerce.extensions.edly_ecommerce_app.helpers import decode_edly_user_info_cookie
 from ecommerce.invoice.models import Invoice
+from opaque_keys.edx.keys import CourseKey
 
 logger = logging.getLogger(__name__)
 
@@ -517,6 +520,21 @@ class AtomicPublicationSerializer(serializers.Serializer):  # pylint: disable=ab
                 )
 
         return products
+
+    def validate_id(self, course_id):
+        """
+        Validate if given course ID belongs to logged in user's organization.
+        """
+        cookies = self.context['request'].COOKIES
+        edly_user_info_cookie_data = decode_edly_user_info_cookie(
+            cookies.get(settings.EDLY_USER_INFO_COOKIE_NAME, None)
+        )
+        course_key = CourseKey.from_string(course_id)
+        if edly_user_info_cookie_data and edly_user_info_cookie_data.get('edx-org') != course_key.org:
+            raise serializers.ValidationError(
+                _(u"Course with ID [{course_id}] does not belong to logged in user's organization.").format(course_id=course_id)
+            )
+
 
     def get_partner(self):
         """Validate partner"""

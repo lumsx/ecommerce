@@ -11,6 +11,7 @@ from ecommerce.core.constants import COURSE_ID_REGEX
 from ecommerce.courses.models import Course
 from ecommerce.extensions.api import serializers
 from ecommerce.extensions.api.v2.views import NonDestroyableModelViewSet
+from ecommerce.extensions.edly_ecommerce_app.helpers import is_valid_site_course
 
 Product = get_model('catalogue', 'Product')
 ProductAttributeValue = get_model('catalogue', 'ProductAttributeValue')
@@ -71,6 +72,14 @@ class CourseViewSet(NonDestroyableModelViewSet):
               paramType: query
               multiple: false
         """
+        course_id = kwargs.get('pk')
+        if not is_valid_site_course(course_id, request):
+            return Response(
+                {
+                    'error': 'Course with ID "{course_id}" does not exist for this site.'.format(course_id=course_id)
+                },
+                status=status.HTTP_404_NOT_FOUND
+            )
         return super(CourseViewSet, self).retrieve(request, *args, **kwargs)
 
     def get_serializer_context(self):

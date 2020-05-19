@@ -103,3 +103,6 @@ ECOMMERCE_COOKIE_DOMAIN = config_from_yaml.get('ECOMMERCE_COOKIE_DOMAIN')
 
 # Edly marketing site configuration
 EDLY_WORDPRESS_URL = config_from_yaml.get('EDLY_WORDPRESS_URL', EDLY_WORDPRESS_URL)
+
+# Edly configuration
+EDLY_COOKIE_SECRET_KEY = config_from_yaml.get('EDLY_COOKIE_SECRET_KEY', EDLY_COOKIE_SECRET_KEY)

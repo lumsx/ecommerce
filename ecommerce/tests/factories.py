@@ -40,6 +40,10 @@ class SiteConfigurationFactory(factory.DjangoModelFactory):
     enable_partial_program = False
     discovery_api_url = 'http://{}.fake/'.format(Faker().domain_name())
 
+    @factory.lazy_attribute
+    def edly_client_theme_branding_settings(self):
+        return {}
+
 
 class StockRecordFactory(OscarStockRecordFactory):
     product = factory.SubFactory(ProductFactory)

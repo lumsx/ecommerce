@@ -1,25 +1,24 @@
 from math import floor
 
-from django.conf import settings
 from django.core.cache import cache
 
-EDLY_CACHE_NAME = 'context_processor.edly_app'
-CACHE_NAME = 'context_processor.dynamic_theming'
-DEFAULT_SERVICES_NOTIFICATIONS_COOKIE_EXPIRY = 180  # value in seconds
 DEFAULT_EDLY_CACHE_TIMEOUT = 900  # value in seconds
-DEFAULT_COLOR_DICT = {
+DEFAULT_SERVICES_NOTIFICATIONS_COOKIE_EXPIRY = 180  # value in seconds
+DEFAULT_THEME_BRANDING_DICT = {
+    'logo': "https://edly-edx-theme-files.s3.amazonaws.com/st-lutherx-logo.png",
+    'favicon': "https://edly-edx-theme-files.s3.amazonaws.com/favicon.ico",
+}
+DEFAULT_THEME_COLOR_DICT = {
     'primary': '#3E99D4',
     'secondary': '#1197EA'
 }
-DEFAULT_FONTS_DICT = {
+DEFAULT_THEME_FONTS_DICT = {
     'base-font': "'Open Sans', sans-serif",
     'heading-font': "'Open Sans', sans-serif",
     'font-path': "https://fonts.googleapis.com/css?family=Open+Sans:400,600,700&display=swap",
 }
-DEFAULT_BRANDING_DICT = {
-    'logo': "https://edly-edx-theme-files.s3.amazonaws.com/st-lutherx-logo.png",
-    'favicon': "https://edly-edx-theme-files.s3.amazonaws.com/favicon.ico",
-}
+DYNAMIC_THEMING_CACHE_NAME = 'context_processor.dynamic_theming'
+EDLY_APP_CACHE_NAME = 'context_processor.edly_app'
 
 
 def dynamic_theming_context(request):  # pylint: disable=unused-argument
@@ -29,11 +28,11 @@ def dynamic_theming_context(request):  # pylint: disable=unused-argument
     configuration_helpers = request.site.siteconfiguration.edly_client_theme_branding_settings
     cache_timeout = configuration_helpers.get('EDLY_CACHE_TIMEOUT', DEFAULT_EDLY_CACHE_TIMEOUT)
 
-    fonts_configuration = configuration_helpers.get('FONTS', DEFAULT_FONTS_DICT)
+    fonts_configuration = configuration_helpers.get('FONTS', DEFAULT_THEME_FONTS_DICT)
     fonts_configuration.update({
-        'font_path': fonts_configuration.pop('font-path', DEFAULT_FONTS_DICT.get('font-path'))
+        'font_path': fonts_configuration.pop('font-path', DEFAULT_THEME_FONTS_DICT.get('font-path'))
     })
-    theming_context = cache.get(CACHE_NAME)
+    theming_context = cache.get(DYNAMIC_THEMING_CACHE_NAME)
     if not theming_context:
         theming_context = {}
         theming_context.update(
@@ -43,10 +42,10 @@ def dynamic_theming_context(request):  # pylint: disable=unused-argument
             {'edly_fonts_config': fonts_configuration}
         )
         theming_context.update(
-            {'edly_branding_config': configuration_helpers.get('BRANDING', DEFAULT_BRANDING_DICT)}
+            {'edly_branding_config': configuration_helpers.get('BRANDING', DEFAULT_THEME_BRANDING_DICT)}
         )
 
-        cache.set(CACHE_NAME, theming_context, cache_timeout)
+        cache.set(DYNAMIC_THEMING_CACHE_NAME, theming_context, cache_timeout)
 
     return theming_context
 
@@ -56,7 +55,7 @@ def edly_app_context(request):  # pylint: disable=unused-argument
     Context processor responsible for edly.
     """
     site_configuration = request.site.siteconfiguration
-    edly_context = cache.get(EDLY_CACHE_NAME)
+    edly_context = cache.get(EDLY_APP_CACHE_NAME)
     cache_timeout = site_configuration.get_edly_configuration_value('EDLY_CACHE_TIMEOUT', DEFAULT_EDLY_CACHE_TIMEOUT)
 
     if not edly_context:
@@ -90,13 +89,13 @@ def edly_app_context(request):  # pylint: disable=unused-argument
             }
         )
 
-        cache.set(EDLY_CACHE_NAME, edly_context, cache_timeout)
+        cache.set(EDLY_APP_CACHE_NAME, edly_context, cache_timeout)
 
     return edly_context
 
 
 def get_theme_colors(configuration_helpers):
-    color_dict = configuration_helpers.get('COLORS', DEFAULT_COLOR_DICT)
+    color_dict = configuration_helpers.get('COLORS', DEFAULT_THEME_COLOR_DICT)
     primary = Colour(str(color_dict.get('primary')))
     secondary = Colour(str(color_dict.get('secondary')))
 

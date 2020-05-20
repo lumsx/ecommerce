@@ -212,6 +212,9 @@ TEMPLATES = [
 # See: https://docs.djangoproject.com/en/dev/ref/settings/#middleware-classes
 MIDDLEWARE_CLASSES = (
     'corsheaders.middleware.CorsMiddleware',
+
+    'ecommerce.extensions.edly_ecommerce_app.middleware.SettingsOverrideMiddleware',
+
     'edx_django_utils.cache.middleware.RequestCacheMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.locale.LocaleMiddleware',

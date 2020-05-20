@@ -85,6 +85,9 @@ define([
                     error: function(response) {
                         if (response.status === 404) {
                             AlertUtils.clearAlerts(self);
+							if (response.responseJSON.hasOwnProperty('error')){
+								AlertUtils.renderAlert('danger', gettext('Error!'), response.responseJSON.error, self);
+							}
                         }
                     }
                 });
@@ -159,19 +162,21 @@ define([
 
                 onSaveError = function(model, response) {
                     var message = gettext('An error occurred while saving the data.');
+                    AlertUtils.clearAlerts(self);
 
                     if (response.responseJSON && response.responseJSON.error) {
                         message = response.responseJSON.error;
+                        AlertUtils.renderAlert('danger', gettext('Error!'), message, self);
 
                         // Log the error to the console for debugging purposes
                         console.error(message); // eslint-disable-line no-console
                     } else {
                         // Log the error to the console for debugging purposes
+                        for (var key in response.responseJSON) {
+                            AlertUtils.renderAlert('danger', gettext('Error!'), response.responseJSON[key], self);
+                        }
                         console.error(response.responseText); // eslint-disable-line no-console
                     }
-
-                    AlertUtils.clearAlerts(self);
-                    AlertUtils.renderAlert('danger', gettext('Error!'), message, self);
                 };
 
                 if (this.editing && _.has(this, 'editableAttributes')) {

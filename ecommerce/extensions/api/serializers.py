@@ -24,6 +24,7 @@ from ecommerce.core.constants import (
 from ecommerce.core.url_utils import get_ecommerce_url
 from ecommerce.courses.models import Course
 from ecommerce.entitlements.utils import create_or_update_course_entitlement
+from ecommerce.extensions.edly_ecommerce_app.helpers import is_valid_site_course
 from ecommerce.extensions.offer.constants import OFFER_ASSIGNMENT_REVOKED, OFFER_MAX_USES_DEFAULT
 from ecommerce.invoice.models import Invoice
 
@@ -517,6 +518,17 @@ class AtomicPublicationSerializer(serializers.Serializer):  # pylint: disable=ab
                 )
 
         return products
+
+    def validate_id(self, course_id):
+        """
+        Validate if given course ID belongs to logged in user's organization.
+        """
+        if not is_valid_site_course(course_id, self.context['request']):
+            raise serializers.ValidationError(
+                _(u'Course with ID "{course_id}" does not exist for this site.').format(course_id=course_id)
+            )
+
+        return course_id
 
     def get_partner(self):
         """Validate partner"""

@@ -211,6 +211,7 @@ TEMPLATES = [
 # MIDDLEWARE CONFIGURATION
 # See: https://docs.djangoproject.com/en/dev/ref/settings/#middleware-classes
 MIDDLEWARE_CLASSES = (
+    'ecommerce.extensions.edly_ecommerce_app.middleware.SettingsOverrideMiddleware',
     'corsheaders.middleware.CorsMiddleware',
     'edx_django_utils.cache.middleware.RequestCacheMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
@@ -658,7 +659,7 @@ SAILTHRU_KEY = None
 SAILTHRU_SECRET = None
 
 # Edly marketing site configuration
-EDLY_WORDPRESS_URL = 'http://wordpress.edx.devstack.lms/'
+EDLY_WORDPRESS_URL = 'http://wordpress.edx.devstack.lms'
 
 # Edly configuration
 EDLY_USER_INFO_COOKIE_NAME = 'edly-user-info'

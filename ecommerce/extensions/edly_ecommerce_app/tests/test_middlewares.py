@@ -20,12 +20,16 @@ class SettingsOverrideMiddlewareTests(TestCase):
         Create environment for settings override middleware tests.
         """
         super(SettingsOverrideMiddlewareTests, self).setUp()
-        self.url = reverse('dashboard:index')
+        self.dashboard_url = reverse('dashboard:index')
         self.user = self.create_user()
         self.client.login(username=self.user.username, password='test')
-        self.default_settings = {key: getattr(settings, key, None) for key in [
-                'ALLOWED_HOSTS', 'EDLY_WORDPRESS_URL', 'CSRF_TRUSTED_ORIGINS',
-                'OSCAR_FROM_EMAIL', 'PLATFORM_NAME'
+        self.default_settings = {
+            key: getattr(settings, key, None) for key in [
+                'ALLOWED_HOSTS',
+                'CSRF_TRUSTED_ORIGINS',
+                'EDLY_WORDPRESS_URL',
+                'OSCAR_FROM_EMAIL',
+                'PLATFORM_NAME',
             ]
         }
 
@@ -41,7 +45,7 @@ class SettingsOverrideMiddlewareTests(TestCase):
         Tests "SettingsOverrideMiddleware" logs warning if site configuration has no django settings override values.
         """
         with LogCapture(logger.name) as logs:
-            self.client.get(self.url)
+            self.client.get(self.dashboard_url)
             logs.check(
                 (
                     logger.name,
@@ -60,7 +64,7 @@ class SettingsOverrideMiddlewareTests(TestCase):
             'EDLY_WORDPRESS_URL': 'http://red.wordpress.edx.devstack.lms',
             'CSRF_TRUSTED_ORIGINS': [],
             'OSCAR_FROM_EMAIL': 'test@example.com',
-            'PLATFORM_NAME': 'Test Platform'
+            'PLATFORM_NAME': 'Test Platform',
         }
         SiteConfiguration.objects.all().delete()
         SiteConfigurationFactory(
@@ -70,5 +74,5 @@ class SettingsOverrideMiddlewareTests(TestCase):
             }
         )
         self._assert_settings_values(self.default_settings)
-        self.client.get('/', follow=True)
+        self.client.get(self.dashboard_url)
         self._assert_settings_values(django_override_settings)

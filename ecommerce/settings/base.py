@@ -211,9 +211,7 @@ TEMPLATES = [
 # MIDDLEWARE CONFIGURATION
 # See: https://docs.djangoproject.com/en/dev/ref/settings/#middleware-classes
 MIDDLEWARE_CLASSES = (
-    # Edly middleware
     'ecommerce.extensions.edly_ecommerce_app.middleware.SettingsOverrideMiddleware',
-
     'corsheaders.middleware.CorsMiddleware',
     'edx_django_utils.cache.middleware.RequestCacheMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',

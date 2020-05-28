@@ -1,8 +1,10 @@
 from logging import getLogger
 from django.conf import settings
 from django.contrib.sites.shortcuts import get_current_site
+from django.http import Http404
 
 from ecommerce.core.models import SiteConfiguration
+from ecommerce.extensions.edly_ecommerce_app.helpers import user_has_edly_organization_access
 
 logger = getLogger(__name__)
 
@@ -30,3 +32,19 @@ class SettingsOverrideMiddleware(object):
                     setattr(settings, config_key, config_value)
             else:
                 logger.warning('Site configuration for site (%s) has no django settings overrides.', current_site)
+
+
+class EdlyOrganizationAccessMiddleware(object):
+    """
+    Django middleware to validate edly user organization access based on request.
+    """
+
+    def process_request(self, request):
+        """
+        Validate logged in user's access based on request site and its linked edx organization.
+        """
+        user_is_authenticated = request.user.is_authenticated
+        user_is_superuser = request.user.is_superuser
+        if user_is_authenticated and not user_is_superuser and not user_has_edly_organization_access(request):
+            logger.exception('Edly user %s has no access for site %s.' % (request.user.email, request.site))
+            raise Http404()

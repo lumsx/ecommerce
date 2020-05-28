@@ -71,3 +71,24 @@ def is_valid_site_course(course_id, request):
         return True
 
     return False
+
+def user_has_edly_organization_access(request):
+    """
+    Check if the requested URL site is allowed for the user.
+
+    This method checks if the partner "short_code" of requested URL site is
+    same as "short_name" of edx organization. Since the partner "short_code"
+    in ECOM will always be same as "short_name" of its related edx
+    organization in LMS.
+
+    Arguments:
+        request: HTTP request object
+
+    Returns:
+        bool: Returns True if User has site access otherwise False.
+    """
+    partner_short_code = request.site.partner.short_code
+    edly_user_info_cookie = request.COOKIES.get(settings.EDLY_USER_INFO_COOKIE_NAME, None)
+    edx_org_short_name = get_edx_org_from_edly_cookie(edly_user_info_cookie)
+
+    return partner_short_code == edx_org_short_name

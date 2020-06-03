@@ -92,3 +92,20 @@ def user_has_edly_organization_access(request):
     edx_org_short_name = get_edx_org_from_edly_cookie(edly_user_info_cookie)
 
     return partner_short_code == edx_org_short_name
+
+def user_is_course_creator(request):
+    """
+    Check if the logged in user is a course creator.
+
+    Arguments:
+        request: HTTP request object
+
+    Returns:
+        bool: Returns True if User has site access otherwise False.
+    """
+    edly_user_info_cookie = request.COOKIES.get(settings.EDLY_USER_INFO_COOKIE_NAME, None)
+    if not edly_user_info_cookie:
+        return False
+
+    decoded_cookie_data = decode_edly_user_info_cookie(edly_user_info_cookie)
+    return decoded_cookie_data.get('is_course_creator', False)

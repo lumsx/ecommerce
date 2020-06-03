@@ -7,7 +7,7 @@ from django.utils.translation import ugettext_lazy as _
 from django.views.generic import View
 from oscar.core.loading import get_model
 
-from ecommerce.core.views import StaffOnlyMixin
+from ecommerce.extensions.edly_ecommerce_app.api.v1.views import StaffOrCourseCreatorOnlyMixin
 from ecommerce.extensions.voucher.utils import generate_coupon_report
 
 logger = logging.getLogger(__name__)
@@ -18,7 +18,7 @@ Product = get_model('catalogue', 'Product')
 StockRecord = get_model('partner', 'StockRecord')
 
 
-class CouponReportCSVView(StaffOnlyMixin, View):
+class CouponReportCSVView(StaffOrCourseCreatorOnlyMixin, View):
     """Generates coupon report and returns it in CSV format."""
 
     def get(self, request, coupon_id):  # pylint: disable=unused-argument

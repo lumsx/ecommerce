@@ -13,13 +13,13 @@ from requests import Timeout
 from slumber.exceptions import SlumberBaseException
 
 from ecommerce.core.url_utils import get_lms_url
-from ecommerce.core.views import StaffOnlyMixin
+from ecommerce.extensions.edly_ecommerce_app.api.v1.views import StaffOrCourseCreatorOnlyMixin
 from ecommerce.extensions.partner.shortcuts import get_partner_for_site
 
 logger = logging.getLogger(__name__)
 
 
-class CourseAppView(StaffOnlyMixin, TemplateView):
+class CourseAppView(StaffOrCourseCreatorOnlyMixin, TemplateView):
     template_name = 'courses/course_app.html'
 
     def get_context_data(self, **kwargs):

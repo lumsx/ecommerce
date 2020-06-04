@@ -9,7 +9,8 @@ from ecommerce.extensions.edly_ecommerce_app.helpers import (
     decode_edly_user_info_cookie,
     encode_edly_user_info_cookie,
     get_edx_org_from_edly_cookie,
-    is_valid_site_course
+    is_valid_site_course,
+    user_is_course_creator,
 )
 from ecommerce.tests.testcases import TestCase
 
@@ -27,7 +28,8 @@ class EdlyAppHelperMethodsTests(TestCase):
         self.test_edly_user_info_cookie_data = {
             'edly-org': 'edly',
             'edly-sub-org': 'cloud',
-            'edx-org': 'edx'
+            'edx-org': 'edx',
+            'is_course_creator': False,
         }
 
     def _set_edly_user_info_cookie(self):
@@ -91,4 +93,11 @@ class EdlyAppHelperMethodsTests(TestCase):
         """
         self._set_edly_user_info_cookie()
         assert is_valid_site_course(self.course.id, self.request)
+
+    def test_user_is_course_creator_works(self):
+        """
+        Test that "user_is_course_creator" method returns correct value.
+        """
+        self._set_edly_user_info_cookie()
+        assert self.test_edly_user_info_cookie_data.get('is_course_creator') == user_is_course_creator(self.request)
 

@@ -17,7 +17,6 @@ from django.views.generic import TemplateView, View
 from oscar.core.loading import get_class, get_model
 
 from ecommerce.core.url_utils import get_ecommerce_url
-from ecommerce.core.views import StaffOnlyMixin
 from ecommerce.coupons.decorators import login_required_for_credit
 from ecommerce.coupons.utils import is_voucher_applied
 from ecommerce.enterprise.decorators import set_enterprise_cookie
@@ -33,6 +32,7 @@ from ecommerce.extensions.api import exceptions
 from ecommerce.extensions.basket.utils import prepare_basket
 from ecommerce.extensions.checkout.mixins import EdxOrderPlacementMixin
 from ecommerce.extensions.checkout.utils import get_receipt_page_url
+from ecommerce.extensions.edly_ecommerce_app.api.v1.views import StaffOrCourseCreatorOnlyMixin
 from ecommerce.extensions.offer.utils import render_email_confirmation_if_required
 from ecommerce.extensions.order.exceptions import AlreadyPlacedOrderException
 from ecommerce.extensions.voucher.utils import get_voucher_and_products_from_code
@@ -94,7 +94,7 @@ def voucher_is_valid(voucher, products, request):
     return True, ''
 
 
-class CouponAppView(StaffOnlyMixin, TemplateView):
+class CouponAppView(StaffOrCourseCreatorOnlyMixin, TemplateView):
     template_name = 'coupons/coupon_app.html'
 
     def get_context_data(self, **kwargs):

@@ -2,8 +2,11 @@
 Views for API v1.
 """
 
+from django.contrib.auth.decorators import login_required
 from django.contrib.sites.shortcuts import get_current_site
+from django.http import Http404
 from django.middleware import csrf
+from django.utils.decorators import method_decorator
 from rest_framework import status
 from rest_framework.authentication import SessionAuthentication
 from rest_framework.permissions import IsAuthenticated
@@ -11,6 +14,7 @@ from rest_framework.response import Response
 from rest_framework.views import APIView
 
 from ecommerce.extensions.edly_ecommerce_app.api.v1.constants import ERROR_MESSAGES
+from ecommerce.extensions.edly_ecommerce_app.helpers import user_is_course_creator
 from ecommerce.theming.models import SiteTheme
 
 
@@ -67,3 +71,16 @@ class UserSessionInfo(APIView):
         csrf_token = csrf.get_token(request)
         data = {'csrf_token': csrf_token}
         return Response(data)
+
+
+class StaffOrCourseCreatorOnlyMixin(object):
+    """
+    Makes sure only staff users and course creators can access the view.
+    """
+
+    @method_decorator(login_required)
+    def dispatch(self, request, *args, **kwargs):
+        if not user_is_course_creator(request) and not request.user.is_staff:
+            raise Http404
+
+        return super(StaffOrCourseCreatorOnlyMixin, self).dispatch(request, *args, **kwargs)

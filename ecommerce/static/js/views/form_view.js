@@ -172,6 +172,10 @@ define([
                         console.error(message); // eslint-disable-line no-console
                     } else {
                         // Log the error to the console for debugging purposes
+                        if (typeof response.responseJSON === 'string' || response.responseJSON instanceof String){
+                            response.responseJSON = Array(response.responseJSON);
+                        }
+
                         for (var key in response.responseJSON) {
                             AlertUtils.renderAlert('danger', gettext('Error!'), response.responseJSON[key], self);
                         }

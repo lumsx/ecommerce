@@ -2,12 +2,13 @@
 from django.db.models import Q
 from oscar.core.loading import get_model
 from rest_framework import filters
-from rest_framework.permissions import IsAdminUser, IsAuthenticated
+from rest_framework.permissions import IsAuthenticated
 from rest_framework_extensions.mixins import NestedViewSetMixin
 
 from ecommerce.extensions.api import serializers
 from ecommerce.extensions.api.filters import ProductFilter
 from ecommerce.extensions.api.v2.views import NonDestroyableModelViewSet
+from ecommerce.extensions.edly_ecommerce_app.permissions import IsAdminOrCourseCreator
 
 Product = get_model('catalogue', 'Product')
 
@@ -16,7 +17,7 @@ class ProductViewSet(NestedViewSetMixin, NonDestroyableModelViewSet):
     serializer_class = serializers.ProductSerializer
     filter_backends = (filters.DjangoFilterBackend,)
     filter_class = ProductFilter
-    permission_classes = (IsAuthenticated, IsAdminUser,)
+    permission_classes = (IsAuthenticated, IsAdminOrCourseCreator,)
 
     def get_queryset(self):
         self.queryset = Product.objects.all()

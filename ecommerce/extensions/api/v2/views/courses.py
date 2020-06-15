@@ -4,7 +4,7 @@ from django.db.models import Prefetch
 from oscar.core.loading import get_model
 from rest_framework import status
 from rest_framework.decorators import detail_route
-from rest_framework.permissions import IsAdminUser, IsAuthenticated
+from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 
 from ecommerce.core.constants import COURSE_ID_REGEX
@@ -12,6 +12,7 @@ from ecommerce.courses.models import Course
 from ecommerce.extensions.api import serializers
 from ecommerce.extensions.api.v2.views import NonDestroyableModelViewSet
 from ecommerce.extensions.edly_ecommerce_app.helpers import is_valid_site_course
+from ecommerce.extensions.edly_ecommerce_app.permissions import IsAdminOrCourseCreator
 
 Product = get_model('catalogue', 'Product')
 ProductAttributeValue = get_model('catalogue', 'ProductAttributeValue')
@@ -28,7 +29,7 @@ class CourseViewSet(NonDestroyableModelViewSet):
     )
     lookup_value_regex = COURSE_ID_REGEX
     serializer_class = serializers.CourseSerializer
-    permission_classes = (IsAuthenticated, IsAdminUser,)
+    permission_classes = (IsAuthenticated, IsAdminOrCourseCreator,)
 
     def get_queryset(self):
         site_configuration = self.request.site.siteconfiguration

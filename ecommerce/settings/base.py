@@ -77,8 +77,86 @@ USE_I18N = True
 
 LANGUAGES = (
     ('en', _('English')),
-    ('es', _('Spanish')),
-    ('es-419', _('Spanish (Latin American)')),
+    ('rtl', _('Right-to-Left Test Language')),
+    ('eo', _('Dummy Language (Esperanto)')),  # Dummy languaged used for testing
+    ('fake2', _('Fake translations')),        # Another dummy language for testing (not pushed to prod)
+
+    ('am', _('አማርኛ')),  # Amharic
+    ('ar', _('العربية')),  # Arabic
+    ('az', _('azərbaycanca')),  # Azerbaijani
+    ('bg-bg', _('български (България)')),  # Bulgarian (Bulgaria)
+    ('bn-bd', _('বাংলা (বাংলাদেশ)')),  # Bengali (Bangladesh)
+    ('bn-in', _('বাংলা (ভারত)')),  # Bengali (India)
+    ('bs', _('bosanski')),  # Bosnian
+    ('ca', _('Català')),  # Catalan
+    ('ca@valencia', _('Català (València)')),  # Catalan (Valencia)
+    ('cs', _('Čeština')),  # Czech
+    ('cy', _('Cymraeg')),  # Welsh
+    ('da', _('dansk')),  # Danish
+    ('de-de', _('Deutsch (Deutschland)')),  # German (Germany)
+    ('el', _('Ελληνικά')),  # Greek
+    ('en-uk', _('English (United Kingdom)')),  # English (United Kingdom)
+    ('en@lolcat', _('LOLCAT English')),  # LOLCAT English
+    ('en@pirate', _('Pirate English')),  # Pirate English
+    ('es-419', _('Español (Latinoamérica)')),  # Spanish (Latin America)
+    ('es-ar', _('Español (Argentina)')),  # Spanish (Argentina)
+    ('es-ec', _('Español (Ecuador)')),  # Spanish (Ecuador)
+    ('es-es', _('Español (España)')),  # Spanish (Spain)
+    ('es-mx', _('Español (México)')),  # Spanish (Mexico)
+    ('es-pe', _('Español (Perú)')),  # Spanish (Peru)
+    ('et-ee', _('Eesti (Eesti)')),  # Estonian (Estonia)
+    ('eu-es', _('euskara (Espainia)')),  # Basque (Spain)
+    ('fa', _('فارسی')),  # Persian
+    ('fa-ir', _('فارسی (ایران)')),  # Persian (Iran)
+    ('fi-fi', _('Suomi (Suomi)')),  # Finnish (Finland)
+    ('fil', _('Filipino')),  # Filipino
+    ('fr', _('Français')),  # French
+    ('gl', _('Galego')),  # Galician
+    ('gu', _('ગુજરાતી')),  # Gujarati
+    ('he', _('עברית')),  # Hebrew
+    ('hi', _('हिन्दी')),  # Hindi
+    ('hr', _('hrvatski')),  # Croatian
+    ('hu', _('magyar')),  # Hungarian
+    ('hy-am', _('Հայերեն (Հայաստան)')),  # Armenian (Armenia)
+    ('id', _('Bahasa Indonesia')),  # Indonesian
+    ('it-it', _('Italiano (Italia)')),  # Italian (Italy)
+    ('ja-jp', _('日本語 (日本)')),  # Japanese (Japan)
+    ('kk-kz', _('қазақ тілі (Қазақстан)')),  # Kazakh (Kazakhstan)
+    ('km-kh', _('ភាសាខ្មែរ (កម្ពុជា)')),  # Khmer (Cambodia)
+    ('kn', _('ಕನ್ನಡ')),  # Kannada
+    ('ko-kr', _('한국어 (대한민국)')),  # Korean (Korea)
+    ('lt-lt', _('Lietuvių (Lietuva)')),  # Lithuanian (Lithuania)
+    ('ml', _('മലയാളം')),  # Malayalam
+    ('mn', _('Монгол хэл')),  # Mongolian
+    ('mr', _('मराठी')),  # Marathi
+    ('ms', _('Bahasa Melayu')),  # Malay
+    ('nb', _('Norsk bokmål')),  # Norwegian Bokmål
+    ('ne', _('नेपाली')),  # Nepali
+    ('nl-nl', _('Nederlands (Nederland)')),  # Dutch (Netherlands)
+    ('or', _('ଓଡ଼ିଆ')),  # Oriya
+    ('pl', _('Polski')),  # Polish
+    ('pt-br', _('Português (Brasil)')),  # Portuguese (Brazil)
+    ('pt-pt', _('Português (Portugal)')),  # Portuguese (Portugal)
+    ('ro', _('română')),  # Romanian
+    ('ru', _('Русский')),  # Russian
+    ('si', _('සිංහල')),  # Sinhala
+    ('sk', _('Slovenčina')),  # Slovak
+    ('sl', _('Slovenščina')),  # Slovenian
+    ('sq', _('shqip')),  # Albanian
+    ('sr', _('Српски')),  # Serbian
+    ('sv', _('svenska')),  # Swedish
+    ('sw', _('Kiswahili')),  # Swahili
+    ('ta', _('தமிழ்')),  # Tamil
+    ('te', _('తెలుగు')),  # Telugu
+    ('th', _('ไทย')),  # Thai
+    ('tr-tr', _('Türkçe (Türkiye)')),  # Turkish (Turkey)
+    ('uk', _('Українська')),  # Ukranian
+    ('ur', _('اردو')),  # Urdu
+    ('vi', _('Tiếng Việt')),  # Vietnamese
+    ('uz', _('Ўзбек')),  # Uzbek
+    ('zh-cn', _('中文 (简体)')),  # Chinese (China)
+    ('zh-hk', _('中文 (香港)')),  # Chinese (Hong Kong)
+    ('zh-tw', _('中文 (台灣)')),  # Chinese (Taiwan)
 )
 
 LOCALE_PATHS = (

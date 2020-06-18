@@ -32,11 +32,23 @@ class SettingsOverrideMiddleware(object):
             if django_settings_override_values:
                 for config_key, config_value in django_settings_override_values.items():
                     current_value = getattr(settings, config_key, None)
+                    logger.debug(
+                        'Config key: %s ========== Config value: %s ========== Current value: %s',
+                        config_key,
+                        config_value,
+                        current_value
+                    )
                     if _should_extend_config(current_value, config_value):
                         current_value.extend(config_value)
                         setattr(settings, config_key, current_value)
                     else:
                         setattr(settings, config_key, config_value)
+
+                    logger.debug(
+                        'After set ========== Config key: %s ========== set value: %s',
+                        config_key,
+                        getattr(settings, config_key, None)
+                    )
             else:
                 logger.warning('Site configuration for site (%s) has no django settings overrides.', current_site)
 

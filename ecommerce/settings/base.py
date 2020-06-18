@@ -230,8 +230,6 @@ SECRET_KEY = os.environ.get('ECOMMERCE_SECRET_KEY', 'insecure-secret-key')
 # Hosts/domain names that are valid for this site
 # See https://docs.djangoproject.com/en/1.5/ref/settings/#allowed-hosts
 ALLOWED_HOSTS = []
-ALLOWED_HOSTS += AllowedHosts(defaults=(), cache=True)
-
 # END SITE CONFIGURATION
 
 

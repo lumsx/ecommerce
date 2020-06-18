@@ -10,6 +10,7 @@ from django.utils.translation import ugettext_lazy as _
 from oscar import OSCAR_MAIN_TEMPLATE_DIR
 
 from ecommerce.settings._oscar import *
+from ecommerce.extensions.edly_ecommerce_app.helpers import AllowedHosts
 
 # PATH CONFIGURATION
 # Absolute filesystem path to the Django project directory
@@ -229,6 +230,8 @@ SECRET_KEY = os.environ.get('ECOMMERCE_SECRET_KEY', 'insecure-secret-key')
 # Hosts/domain names that are valid for this site
 # See https://docs.djangoproject.com/en/1.5/ref/settings/#allowed-hosts
 ALLOWED_HOSTS = []
+ALLOWED_HOSTS += AllowedHosts(defaults=(), cache=True)
+
 # END SITE CONFIGURATION
 
 

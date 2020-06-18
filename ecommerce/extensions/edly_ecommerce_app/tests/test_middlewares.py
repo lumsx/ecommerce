@@ -77,7 +77,42 @@ class SettingsOverrideMiddlewareTests(TestCase):
         )
         self._assert_settings_values(self.default_settings)
         self.client.get(self.dashboard_url)
+        for key in django_override_settings.keys():
+            if isinstance(django_override_settings.get(key), (list, tuple)):
+                django_override_settings.get(key).extend(getattr(settings, key, None))
         self._assert_settings_values(django_override_settings)
+
+    def test_settings_override_middleware_overrides_settings_correctly_if_list_tuple(self):
+        """
+        Tests "SettingsOverrideMiddleware" correctly overrides tuple/list django settings.
+
+        Tests if a value being overriden through the middleware is a tuple/list value,
+        the value is being extended not replaced.
+        """
+        django_override_settings = {
+            'ALLOWED_HOSTS': (
+                'localhost',
+                '.edx.devstack.lms',
+            ),
+            'EDLY_WORDPRESS_URL': 'http://red.wordpress.edx.devstack.lms',
+            'CSRF_TRUSTED_ORIGINS': [],
+            'OSCAR_FROM_EMAIL': 'test@example.com',
+            'PLATFORM_NAME': 'Test Platform',
+        }
+        SiteConfiguration.objects.all().delete()
+        SiteConfigurationFactory(
+            site=self.request.site,
+            edly_client_theme_branding_settings={
+                'DJANGO_SETTINGS_OVERRIDE': django_override_settings
+            }
+        )
+        self._assert_settings_values(self.default_settings)
+        self.client.get('/', follow=True)
+        default_settings = self.default_settings.copy()
+        default_settings.get('ALLOWED_HOSTS', []).extend(
+            django_override_settings.get('ALLOWED_HOSTS', [])
+        )
+        self._assert_settings_values(default_settings)
 
 
 class EdlyOrganizationAccessMiddlewareTests(TestCase):

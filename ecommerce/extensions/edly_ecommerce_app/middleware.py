@@ -31,7 +31,12 @@ class SettingsOverrideMiddleware(object):
             django_settings_override_values = current_site_configuration.get_edly_configuration_value('DJANGO_SETTINGS_OVERRIDE', None)
             if django_settings_override_values:
                 for config_key, config_value in django_settings_override_values.items():
-                    setattr(settings, config_key, config_value)
+                    current_value = getattr(settings, config_key, None)
+                    if _should_extend_config(current_value, config_value):
+                        current_value.extend(config_value)
+                        setattr(settings, config_key, current_value)
+                    else:
+                        setattr(settings, config_key, config_value)
             else:
                 logger.warning('Site configuration for site (%s) has no django settings overrides.', current_site)
 
@@ -51,3 +56,10 @@ class EdlyOrganizationAccessMiddleware(object):
             logger.exception('Edly user %s has no access for site %s.' % (request.user.email, request.site))
             if 'logout' not in request.path:
                 return HttpResponseRedirect(reverse('logout'))
+
+
+def _should_extend_config(current_value, new_value):
+    """
+    Check if middleware should extend config value or update it.
+    """
+    return isinstance(current_value, (list, tuple)) and isinstance(new_value, (list, tuple))

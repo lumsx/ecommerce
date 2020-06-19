@@ -8,8 +8,8 @@ import yaml
 # into your settings, but ImproperlyConfigured is an exception.
 from django.core.exceptions import ImproperlyConfigured
 
-from allowedsites import AllowedSites
 from ecommerce.settings.base import *
+from allowedsites import AllowedSites
 
 # Protocol used for construcing absolute callback URLs
 PROTOCOL = 'https'

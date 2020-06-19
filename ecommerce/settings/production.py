@@ -9,7 +9,6 @@ import yaml
 from django.core.exceptions import ImproperlyConfigured
 
 from ecommerce.settings.base import *
-from allowedsites import AllowedSites
 
 # Protocol used for construcing absolute callback URLs
 PROTOCOL = 'https'
@@ -108,6 +107,7 @@ EDLY_WORDPRESS_URL = config_from_yaml.get('EDLY_WORDPRESS_URL', EDLY_WORDPRESS_U
 # Edly configuration
 EDLY_COOKIE_SECRET_KEY = config_from_yaml.get('EDLY_COOKIE_SECRET_KEY', EDLY_COOKIE_SECRET_KEY)
 
+from allowedsites import AllowedSites
 ALLOWED_HOSTS = AllowedSites(defaults=(
         'panel.edly.io',
         'panel.backend.edly.io',

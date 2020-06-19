@@ -37,8 +37,7 @@ def get_env_setting(setting):
 
 # HOST CONFIGURATION
 # See: https://docs.djangoproject.com/en/1.5/releases/1.5/#allowed-hosts-required-in-production
-ALLOWED_HOSTS = AllowedSites(defaults=('.multisitestage.edly.io',))
-
+ALLOWED_HOSTS = ['*']
 # END HOST CONFIGURATION
 
 # Keep track of the names of settings that represent dicts. Instead of overriding the values in base.py,
@@ -108,3 +107,11 @@ EDLY_WORDPRESS_URL = config_from_yaml.get('EDLY_WORDPRESS_URL', EDLY_WORDPRESS_U
 
 # Edly configuration
 EDLY_COOKIE_SECRET_KEY = config_from_yaml.get('EDLY_COOKIE_SECRET_KEY', EDLY_COOKIE_SECRET_KEY)
+
+ALLOWED_HOSTS = AllowedSites(defaults=(
+        'panel.edly.io',
+        'panel.backend.edly.io',
+        '.edly.io',
+        'ecommerce.healthcheck.local'
+    )
+)

@@ -10,7 +10,6 @@ from django.utils.translation import ugettext_lazy as _
 from oscar import OSCAR_MAIN_TEMPLATE_DIR
 
 from ecommerce.settings._oscar import *
-from ecommerce.extensions.edly_ecommerce_app.helpers import AllowedHosts
 
 # PATH CONFIGURATION
 # Absolute filesystem path to the Django project directory

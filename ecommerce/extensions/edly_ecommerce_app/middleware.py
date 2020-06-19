@@ -37,7 +37,6 @@ class SettingsOverrideMiddleware(object):
                         setattr(settings, config_key, current_value)
                     else:
                         setattr(settings, config_key, config_value)
-
             else:
                 logger.warning('Site configuration for site (%s) has no django settings overrides.', current_site)
 

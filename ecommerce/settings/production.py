@@ -8,6 +8,7 @@ import yaml
 # into your settings, but ImproperlyConfigured is an exception.
 from django.core.exceptions import ImproperlyConfigured
 
+from allowedsites import AllowedSites
 from ecommerce.settings.base import *
 
 # Protocol used for construcing absolute callback URLs
@@ -36,7 +37,8 @@ def get_env_setting(setting):
 
 # HOST CONFIGURATION
 # See: https://docs.djangoproject.com/en/1.5/releases/1.5/#allowed-hosts-required-in-production
-ALLOWED_HOSTS = AllowedHosts(defaults=('*'), cache=True)
+ALLOWED_HOSTS = AllowedSites(defaults=('.multisitestage.edly.io',))
+
 # END HOST CONFIGURATION
 
 # Keep track of the names of settings that represent dicts. Instead of overriding the values in base.py,

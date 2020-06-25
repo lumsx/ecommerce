@@ -31,7 +31,7 @@ def send_notification(user, commtype_code, context, site):
     context.update({
         'full_name': full_name,
         'site_domain': site.domain,
-        'platform_name': site.name,
+        'platform_name': configuration_helpers.get('PLATFORM_NAME', site.name),
         'tracking_pixel': tracking_pixel,
         'edly_mailing_address': configuration_helpers.get('CONTACT_MAILING_ADDRESS'),
         'edly_copyright_text': configuration_helpers.get('EDLY_COPYRIGHT_TEXT'),

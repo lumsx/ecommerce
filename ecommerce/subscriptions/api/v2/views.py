@@ -35,10 +35,16 @@ class SubscriptionViewSet(EdxOrderPlacementMixin, NonDestroyableModelViewSet):
 
     def get_queryset(self):
         site_configuration = self.request.site.siteconfiguration
-        return Product.objects.filter(
+        filter_active_param = self.request.query_params.get('filter_active', 'false')
+        filter_active = True if filter_active_param == 'true' else False
+        products = Product.objects.filter(
             product_class__name=SUBSCRIPTION_PRODUCT_CLASS_NAME,
-            stockrecords__partner=site_configuration.partner
+            stockrecords__partner=site_configuration.partner,
         )
+        if filter_active:
+            products = products.filter(attribute_values__value_boolean=filter_active)
+
+        return products
 
     def get_serializer_class(self):
         if self.action == 'list':

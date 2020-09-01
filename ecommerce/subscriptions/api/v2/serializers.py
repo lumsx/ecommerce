@@ -38,6 +38,7 @@ class SubscriptionListSerializer(serializers.ModelSerializer):
     subscription_actual_price = serializers.SerializerMethodField()
     subscription_price = serializers.SerializerMethodField()
     subscription_status = serializers.SerializerMethodField()
+    partner_sku = serializers.SerializerMethodField()
     display_order = serializers.SerializerMethodField()
 
     def get_subscription_type(self, product):
@@ -64,6 +65,12 @@ class SubscriptionListSerializer(serializers.ModelSerializer):
         """
         return product.attr.subscription_status
 
+    def get_partner_sku(self, product):
+        """
+        Get subscription's partner sku.
+        """
+        return product.stockrecords.first().partner_sku
+
     def get_display_order(self, product):
         """
         Get subscription's display order.
@@ -74,7 +81,7 @@ class SubscriptionListSerializer(serializers.ModelSerializer):
         model = Product
         fields = [
             'id', 'title', 'date_created', 'subscription_type', 'subscription_actual_price', 'subscription_price',
-            'subscription_status', 'display_order',
+            'subscription_status', 'display_order', 'partner_sku',
         ]
 
 

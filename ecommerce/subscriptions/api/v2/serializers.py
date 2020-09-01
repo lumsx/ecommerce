@@ -30,7 +30,7 @@ SUBSCRIPTION_TYPE_ATTRIBUTES = {
     'full-access-time-period': ['number_of_courses', ],
     'lifetime-access': [],
 }
-SUBSCRIPTION_GENERAL_ATTRIBUTES = ['subscription_type', 'subscription_actual_price', 'subscription_price', 'subscription_status']
+SUBSCRIPTION_GENERAL_ATTRIBUTES = ['subscription_type', 'subscription_actual_price', 'subscription_price', 'subscription_status', 'subscription_display_order']
 
 
 class SubscriptionListSerializer(serializers.ModelSerializer):
@@ -39,6 +39,7 @@ class SubscriptionListSerializer(serializers.ModelSerializer):
     subscription_price = serializers.SerializerMethodField()
     subscription_status = serializers.SerializerMethodField()
     partner_sku = serializers.SerializerMethodField()
+    display_order = serializers.SerializerMethodField()
 
     def get_subscription_type(self, product):
         """
@@ -70,9 +71,18 @@ class SubscriptionListSerializer(serializers.ModelSerializer):
         """
         return product.stockrecords.first().partner_sku
 
+    def get_display_order(self, product):
+        """
+        Get subscription's display order.
+        """
+        return product.attr.subscription_display_order
+
     class Meta:
         model = Product
-        fields = ['id', 'title', 'date_created', 'subscription_type', 'subscription_actual_price', 'subscription_price', 'subscription_status', 'partner_sku']
+        fields = [
+            'id', 'title', 'date_created', 'subscription_type', 'subscription_actual_price', 'subscription_price',
+            'subscription_status', 'display_order', 'partner_sku',
+        ]
 
 
 class SubscriptionSerializer(serializers.ModelSerializer):
@@ -152,6 +162,7 @@ class SubscriptionSerializer(serializers.ModelSerializer):
             'number_of_courses': obj.get('number_of_courses', 0),
             'subscription_duration_value': obj.get('subscription_duration_value', 0),
             'subscription_duration_unit': obj.get('subscription_duration_unit', 'days'),
+            'subscription_display_order': obj.get('subscription_display_order', 1),
         })
 
         return internal_value

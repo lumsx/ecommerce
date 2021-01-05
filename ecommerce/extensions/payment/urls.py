@@ -1,6 +1,6 @@
 from django.conf.urls import include, url
 
-from ecommerce.extensions.payment.views import PaymentFailedView, SDNFailure, authorizenet, cybersource, paypal, stripe
+from ecommerce.extensions.payment.views import PaymentFailedView, SDNFailure, authorizenet, cybersource, paypal, stripe, lumsxpay
 
 CYBERSOURCE_APPLE_PAY_URLS = [
     url(r'^authorize/$', cybersource.CybersourceApplePayAuthorizationView.as_view(), name='authorize'),
@@ -30,6 +30,10 @@ AUTHORIZENET_URLS = [
     url(r'^redirect/$', authorizenet.handle_redirection, name='redirect'),
 ]
 
+LUMSXPAY_URLS = [
+    url(r'^execute/$', lumsxpay.LumsxpayExecutionView.as_view(), name='execute'),
+]
+
 urlpatterns = [
     url(r'^cybersource/', include(CYBERSOURCE_URLS, namespace='cybersource')),
     url(r'^error/$', PaymentFailedView.as_view(), name='payment_error'),
@@ -37,4 +41,6 @@ urlpatterns = [
     url(r'^sdn/', include(SDN_URLS, namespace='sdn')),
     url(r'^stripe/', include(STRIPE_URLS, namespace='stripe')),
     url(r'^authorizenet/', include(AUTHORIZENET_URLS, namespace='authorizenet')),
+    url(r'^lumsxpay/', include(LUMSXPAY_URLS, namespace='lumsxpay'))
 ]
+

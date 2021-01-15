@@ -1,0 +1,123 @@
+{% extends "edx/base.html" %}
+{% load i18n %}
+{% block title %}Bootstrap Demo{% endblock title %}
+
+
+{% block content %}
+    <nav class="navbar navbar-default navbar-fixed-top">
+        <div class="container-fluid">
+            <a class="navbar-brand" rel="home" href="#" title="Buy Sell Rent Everyting">
+                <img style="max-width:160px; margin-top: -20px; margin-left: 15px;"
+                     src="{{ configuration_helpers.BRANDING.logo }}">
+            </a>
+            <div class="collapse navbar-collapse" id="main-navbar-collapse">
+                <ul class="nav navbar-nav navbar-right">
+                    {% if user.is_authenticated %}
+                        <li class="btn-group user-menu" style="margin-right: 50px">
+                            <button type="button" class="btn btn-default hidden-xs main-btn nav-button"
+                                    onclick="window.open('{{ lms_dashboard_url }}');">
+                                <i class="icon fa fa-home" aria-hidden="true"></i>
+                                <span class="sr-only">{% trans "Dashboard for:" %}</span>
+                                {{ user.username }}
+                            </button>
+                        </li>
+                    {% else %}
+                        <a class="btn btn-primary navbar-btn hidden-xs" href="{% url 'login' %}">{% trans "Login" %}</a>
+                        <li class="visible-xs"><a class="nav-link" href="{% url 'login' %}">{% trans "Login" %}</a></li>
+                        </a>
+                    {% endif %}
+                </ul>
+            </div>
+        </div>
+
+    </nav>
+    <div class="container">
+        <div class="alert alert-warning" style="max-width: none;">
+            Payment clearance to the course might take upto {{ configuration_helpers.CRON_DELAY_TIME }} minutes.
+        </div>
+
+        <div class="col-md-12" style="margin-bottom: 20px;">
+            <div class="col-md-5">
+                <div class="col-md-12" style="margin-top: 50px;">
+                    <h5><strong>In Your Cart</strong></h5>
+                </div>
+                <div class="col-md-12">
+                    <h5><strong>Your purchases are the following:</strong></h5>
+                </div>
+                <div class="col-md-12">
+                    <table class="table">
+                        <thead>
+                        <tr>
+                            <th>Product Name</th>
+                            <th>Price</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <tr>
+                            {% for item in items_list %}
+                                <td>
+                                    {{ item.title }}
+                                </td>
+                                <td>
+                                    {{ item.amount }}
+                                </td>
+                            {% endfor %}
+                        </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            </section>
+        </div>
+        <div class="col-md-12" style="margin-bottom: 30px;">
+            <div class="col-ms-12">
+                <div style="margin: 40px;">
+                    <a type="button" class="btn btn-primary" target="_blank" href="{{ url_for_online_payment }}">Pay
+                        Voucher Online</a>
+                    <a type="button" class="btn btn-primary required" target="_blank"
+                       href="{{ url_for_download_voucher }}">Download
+                        Challan Voucher</a>
+                </div>
+            </div>
+            <div class="col-md-8">
+                <p>
+                    <span class="required"></span>
+                    Download the Challan Voucher for payments through, Cash, Pay Order, Bank Drafts, ATM machines,
+                    Internet banking portals at selected banks in Pakistan
+                </p>
+            </div>
+            <div class="col-md-4"></div>
+        </div>
+
+        <div class="col-ms-12" style="margin-top: 80px;">
+            <h3><strong>Next Steps</strong></h3>
+            <h5>
+                A confirmation email will be sent to you when you have made the payment and been enrolled in the course.
+                Please follow the steps in this email to access the course. </br></br>
+                Alternatively, after making the payment you go to your Dashboard to view the course. Please note that it
+                may take up to {{ configuration_helpers.CRON_DELAY_TIME }} minutes for your course to be made available to you. Kindly contact
+                <a>{{ support_email }}</a> for further queries
+            </h5>
+        </div>
+        <div class="col-md-12">
+            <a type="button" class="btn btn-primary"
+                       href="{{ lms_dashboard_url }}">View my courses</a>
+        </div>
+
+
+    </div>
+
+    <style>
+        .required:after {
+            content: " *";
+            color: red;
+        }
+    </style>
+
+    <!-- Bootstrap core JavaScript
+    ================================================== -->
+    <!-- Placed at the end of the document so the pages load faster -->
+    <script type="application/javascript"
+            src="https://cdnjs.cloudflare.com/ajax/libs/holder/2.8.0/holder.min.js"></script>
+
+{% endblock %}

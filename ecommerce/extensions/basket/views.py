@@ -42,6 +42,7 @@ from ecommerce.extensions.order.exceptions import AlreadyPlacedOrderException
 from ecommerce.extensions.partner.shortcuts import get_partner_for_site
 from ecommerce.extensions.payment.constants import CLIENT_SIDE_CHECKOUT_FLAG_NAME
 from ecommerce.extensions.payment.forms import PaymentForm
+from ecommerce.extensions.payment.views.lumsxpay import LumsxpayExecutionView
 
 BasketAttribute = get_model('basket', 'BasketAttribute')
 BasketAttributeType = get_model('basket', 'BasketAttributeType')
@@ -387,6 +388,16 @@ class BasketSummaryView(BasketView):
         if has_enterprise_offer(basket) and basket.total_incl_tax == Decimal(0):
             return redirect('checkout:free-checkout')
         else:
+
+            #  lumsx is giving a thirdparty method for payment rather than a gateway so had to make a minimal
+            #  processor and integerate the API, if client side processor matches with the site configurations
+            #  than move forward towards API
+            configuration_helpers = request.site.siteconfiguration.edly_client_theme_branding_settings
+            custom_processor_name = configuration_helpers.get('PAYMENT_PROCESSOR_NAME')
+            if custom_processor_name == self.request.site.siteconfiguration.client_side_payment_processor:
+                # return LumsxpayExecutionView.get_voucher_api(request)
+                return redirect_to_referrer(self.request, 'lumsxpay:execute')
+
             return super(BasketSummaryView, self).get(request, *args, **kwargs)
 
     @newrelic.agent.function_trace()

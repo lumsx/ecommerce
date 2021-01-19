@@ -1,5 +1,6 @@
 from django.db import models
 from django.utils.translation import ugettext_lazy as _
+from django_extensions.db.models import TimeStampedModel
 from edx_django_utils.cache import DEFAULT_REQUEST_CACHE
 from oscar.apps.basket.abstract_models import AbstractBasket
 from oscar.core.loading import get_class
@@ -125,3 +126,10 @@ class BasketAttribute(models.Model):
 
 # noinspection PyUnresolvedReferences
 from oscar.apps.basket.models import *  # noqa isort:skip pylint: disable=wildcard-import,unused-wildcard-import,wrong-import-position,wrong-import-order,ungrouped-imports
+
+
+class BasketChallanVoucher(TimeStampedModel):
+    basket = models.ForeignKey('basket.Basket', verbose_name=_("Basket"), on_delete=models.CASCADE)
+    voucher_number = models.CharField(max_length=32, unique=True)
+    is_paid = models.BooleanField(default=False, null=False)
+    due_date = models.DateTimeField(null=False)

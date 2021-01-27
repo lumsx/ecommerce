@@ -44,16 +44,11 @@ class LumsxpayExecutionView(EdxOrderPlacementMixin, View):
             for l in basket.all_lines()
         ]
 
-    def get_existing_basket(self, request):
-        courses = [i['id'] for i in self.extract_items_from_basket(request.basket)]
-        course_ids = []
+    def get_existing_basket_challan(self, request):
+        basket = request.basket
+        product = basket.lines.first().product
 
-        for course in courses:
-            product = Product.objects.filter(structure='child', course_id=course).first()
-            if product:
-                course_ids.append(product.id)
-
-        return Basket.objects.filter(owner_id=request.user, lines__product_id__in=course_ids).first()
+        return BasketChallanVoucher.objects.filter(basket=basket, product=product)
 
     def get_due_date(self, configuration_helpers):
         due_date_span_in_weeks = configuration_helpers.get('PAYMENT_DUE_DATE_SPAN', 52)
@@ -79,11 +74,9 @@ class LumsxpayExecutionView(EdxOrderPlacementMixin, View):
             "support_email": request.site.siteconfiguration.payment_support_email,
         }
 
-    def request_already_existing_challan(self, request):
-        challan_basket = BasketChallanVoucher.objects.filter(basket=self.get_existing_basket(request)).first()
-
+    def request_existing_challan_context(self, request, basket_challan):
         configuration_helpers = request.site.siteconfiguration.edly_client_theme_branding_settings
-        url = '{}/{}'.format(configuration_helpers.get('LUMSXPAY_VOUCHER_API_URL'), challan_basket.voucher_number)
+        url = '{}/{}'.format(configuration_helpers.get('LUMSXPAY_VOUCHER_API_URL'), basket_challan.voucher_number)
         headers = {
             "Authorization": configuration_helpers.get('PAYMENT_AUTHORIZATION_KEY'),
             "Content-Type": "application/json"
@@ -96,10 +89,11 @@ class LumsxpayExecutionView(EdxOrderPlacementMixin, View):
         return {}
 
     def get(self, request):
+        basket = request.basket
         configuration_helpers = request.site.siteconfiguration.edly_client_theme_branding_settings
         url = configuration_helpers.get('LUMSXPAY_VOUCHER_API_URL')
 
-        if request.user.is_anonymous or not (url and request.basket):
+        if request.user.is_anonymous or not (url and basket):
             msg = 'user is anonymous cannot proceed to checkout page so redirecting to login. '
             logger.info(msg)
 
@@ -109,19 +103,20 @@ class LumsxpayExecutionView(EdxOrderPlacementMixin, View):
 
             return redirect_to_login(get_lms_dashboard_url)
 
-        if BasketChallanVoucher.objects.filter(basket=self.get_existing_basket(request)).exists():
-            context = self.request_already_existing_challan(request)
+        existing_basket_challan = self.get_existing_basket_challan(request)
+        if existing_basket_challan.exists():
+            context = self.request_existing_challan_context(request, existing_basket_challan.first())
             if not context:
                 logger.exception('challan status API not working, no context found')
                 return HttpResponseNotFound()
 
             return render_to_response('payment/lumsxpay.html', context)
 
-        items = self.extract_items_from_basket(request.basket)
+        items = self.extract_items_from_basket(basket)
         payload = {
             "name": request.user.username,
             "email": request.user.email,
-            "order_id": request.basket.order_number,
+            "order_id": basket.order_number,
             "items": items,
             "due_date": self.get_due_date(configuration_helpers)
         }
@@ -145,10 +140,11 @@ class LumsxpayExecutionView(EdxOrderPlacementMixin, View):
             due_date = voucher_details['data']['due_date']
 
             _, created = BasketChallanVoucher.objects.get_or_create(
-                basket=request.basket,
+                basket=basket,
                 voucher_number=voucher_number,
                 due_date=due_date,
-                is_paid=False
+                is_paid=False,
+                product=basket.lines.first().product
             )
 
             if created:

@@ -129,7 +129,15 @@ from oscar.apps.basket.models import *  # noqa isort:skip pylint: disable=wildca
 
 
 class BasketChallanVoucher(TimeStampedModel):
+    """
+    Used to record the challan form created for a lumsxpay payment processor,
+    voucher is created through lumsx payment API and its code is stored in voucher__number
+    cron job is run over certain time that will update the pending orders.
+    model used in payment > views > lumsxpay view
+    """
     basket = models.ForeignKey('basket.Basket', verbose_name=_("Basket"), on_delete=models.CASCADE)
+    product = models.ForeignKey('catalogue.Product', verbose_name=_("Product"), null=True)
     voucher_number = models.CharField(max_length=32, unique=True)
     is_paid = models.BooleanField(default=False, null=False)
     due_date = models.DateTimeField(null=False)
+

@@ -8,6 +8,7 @@ import requests
 import datetime
 
 from django.contrib.auth.views import redirect_to_login
+from django.contrib.auth.mixins import LoginRequiredMixin
 from django.db import transaction
 from django.http import HttpResponseNotFound
 from django.shortcuts import render_to_response
@@ -26,7 +27,7 @@ Basket = get_model('basket', 'Basket')
 Product = get_model('catalogue', 'Product')
 
 
-class LumsxpayExecutionView(EdxOrderPlacementMixin, View):
+class LumsxpayExecutionView(LoginRequiredMixin, EdxOrderPlacementMixin, View):
     @property
     def payment_processor(self):
         return Lumsxpay(self.request.site)
@@ -93,15 +94,9 @@ class LumsxpayExecutionView(EdxOrderPlacementMixin, View):
         configuration_helpers = request.site.siteconfiguration.edly_client_theme_branding_settings
         url = configuration_helpers.get('LUMSXPAY_VOUCHER_API_URL')
 
-        if request.user.is_anonymous or not (url and basket):
-            msg = 'user is anonymous cannot proceed to checkout page so redirecting to login. '
+        if not url:
+            msg = 'LUMSXPAY_VOUCHER_API_URL is not defined in site configurations'
             logger.info(msg)
-
-            if not url:
-                msg = 'Site configuration in ecommerce does not include payment API url'
-                logger.info(msg)
-
-            return redirect_to_login(get_lms_dashboard_url)
 
         existing_basket_challan = self.get_existing_basket_challan(request)
         if existing_basket_challan.exists():

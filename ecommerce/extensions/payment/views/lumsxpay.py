@@ -6,15 +6,18 @@ import json
 import logging
 import requests
 import datetime
+import urllib
 
-from django.contrib.auth.views import redirect_to_login
+from django.urls import reverse
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.db import transaction
-from django.http import HttpResponseNotFound
+from django.http import HttpResponseNotFound, HttpResponse
 from django.shortcuts import render_to_response
 from django.utils.decorators import method_decorator
+from django.views.decorators.http import require_GET
 from django.views.generic import View
 from oscar.core.loading import get_class, get_model
+from wsgiref.util import FileWrapper
 
 from ecommerce.extensions.checkout.mixins import EdxOrderPlacementMixin
 from ecommerce.extensions.payment.processors.lumsxpay import Lumsxpay
@@ -60,7 +63,11 @@ class LumsxpayExecutionView(LoginRequiredMixin, EdxOrderPlacementMixin, View):
         voucher_details = response.json()
         voucher_data = voucher_details.get('data', {})
         url_for_online_payment = voucher_data.get("url_for_online_payment")
-        url_for_download_voucher = voucher_data.get("url_for_download_voucher")
+        url_for_download_voucher = '{}?voucherurl={}'.format(
+            reverse('lumsxpay:download_voucher'),
+            voucher_data.get("url_for_download_voucher")
+        )
+
         return {
             'configuration_helpers': configuration_helpers,
             'url_for_online_payment': url_for_online_payment,
@@ -156,3 +163,25 @@ class LumsxpayExecutionView(LoginRequiredMixin, EdxOrderPlacementMixin, View):
         )
 
         return HttpResponseNotFound()
+
+@require_GET
+def download_voucher(request):
+        voucher_download_url = request.GET.get('voucherurl')
+
+        if not voucher_download_url:
+            logger.exception('voucherurl not found in the query parameters')
+            return HttpResponseNotFound()
+
+        file_response = urllib.urlretrieve(voucher_download_url)
+
+        if not file_response:
+            logger.exception('the voucher url is not receiving any challan downloads.')
+            return HttpResponseNotFound()
+
+        wrapper = FileWrapper(open(file_response[0], 'rb'))
+        response = HttpResponse(wrapper, content_type='application/force-download')
+        response['Content-Disposition'] = 'inline; filename={}-{}-voucher.pdf'.format(
+            request.user.username, voucher_download_url.split('/')[-1]
+        )
+
+        return response

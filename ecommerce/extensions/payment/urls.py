@@ -32,6 +32,7 @@ AUTHORIZENET_URLS = [
 
 LUMSXPAY_URLS = [
     url(r'^execute/$', lumsxpay.LumsxpayExecutionView.as_view(), name='execute'),
+    url(r'voucher/download/', lumsxpay.download_voucher, name='download_voucher')
 ]
 
 urlpatterns = [

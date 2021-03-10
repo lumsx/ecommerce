@@ -57,7 +57,7 @@ define([
                     required: function() {
                         return this.includeHonorMode();
                     },
-                    msg: gettext('You must choose if an honor seat should be created.')
+                    msg: gettext('You must choose if an honour seat should be created.')
                 },
                 verification_deadline: function(value) {
                     var invalid;
